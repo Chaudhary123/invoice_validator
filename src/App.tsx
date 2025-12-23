@@ -2,6 +2,7 @@ import InvoiceForm from './components/InvoiceForm';
 import InvoiceDisplay from './components/InvoiceDisplay';
 import ValidationResults from './components/ValidationResults';
 import { useInvoiceValidation } from './hooks/useInvoiceValidation';
+import { ORGANIZATIONS, ORGANIZATION_KEYS } from './types/invoice';
 
 const App = () => {
   const {
@@ -23,7 +24,7 @@ const App = () => {
             Invoice Validation Tool
           </h1>
           <p className="text-slate-500 text-sm sm:text-base">
-            Fetch invoices from QuickBook or Salesforce and validate calculations
+            Fetch invoices from {ORGANIZATION_KEYS.map((key) => ORGANIZATIONS[key].displayName).join(', ')} and validate calculations
           </p>
         </div>
 

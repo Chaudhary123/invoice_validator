@@ -1,3 +1,4 @@
+import { ORGANIZATIONS } from '../types/invoice';
 import type { Invoice } from '../types/invoice';
 
 interface InvoiceDisplayProps {
@@ -16,12 +17,10 @@ export default function InvoiceDisplay({ invoice }: InvoiceDisplayProps) {
         <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2 sm:gap-0">
           <span
             className={`px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
-              invoice.organization === 'quickBook'
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                : 'bg-sky-50 text-sky-700 border border-sky-200'
+              ORGANIZATIONS[invoice.organization].badgeClasses
             }`}
           >
-            {invoice.organization === 'quickBook' ? 'QuickBook' : 'Salesforce'}
+            {ORGANIZATIONS[invoice.organization].displayName}
           </span>
           <p className="text-xs sm:text-sm text-slate-400 sm:mt-2">{invoice.date}</p>
         </div>
