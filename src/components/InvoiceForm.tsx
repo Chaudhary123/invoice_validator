@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
+import { ORGANIZATIONS, ORGANIZATION_KEYS } from '../types/invoice';
 import type { OrganizationType } from '../types/invoice';
 
 interface InvoiceFormProps {
@@ -33,11 +34,8 @@ export default function InvoiceForm({ onSubmit, loading, onReset }: InvoiceFormP
     onReset();
   };
 
-  // Sample invoice IDs for quick testing
-  const sampleIds = {
-    quickBook: ['QB-INV-001', 'QB-INV-002', 'QB-INV-003'],
-    salesForce: ['SF-INV-001', 'SF-INV-002', 'SF-INV-003', 'SF-INV-004'],
-  };
+  // Get sample invoice IDs from central config
+  const sampleIds = ORGANIZATIONS[organization].sampleInvoiceIds;
 
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-4 sm:p-6">
@@ -56,8 +54,11 @@ export default function InvoiceForm({ onSubmit, loading, onReset }: InvoiceFormP
             disabled={loading}
             className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-400 focus:border-slate-400 outline-none transition bg-white disabled:bg-slate-50 disabled:text-slate-400"
           >
-            <option value="quickBook">QuickBook</option>
-            <option value="salesForce">Salesforce</option>
+            {ORGANIZATION_KEYS.map((key) => (
+              <option key={key} value={key}>
+                {ORGANIZATIONS[key].displayName}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -79,9 +80,9 @@ export default function InvoiceForm({ onSubmit, loading, onReset }: InvoiceFormP
 
         {/* Sample IDs Helper */}
         <div className="bg-slate-50 rounded-lg p-2.5 sm:p-3">
-          <p className="text-[10px] sm:text-xs text-slate-500 mb-1.5 sm:mb-2">Quick test IDs for {organization}:</p>
+          <p className="text-[10px] sm:text-xs text-slate-500 mb-1.5 sm:mb-2">Quick test IDs for {ORGANIZATIONS[organization].displayName}:</p>
           <div className="flex flex-wrap gap-1.5 sm:gap-2">
-            {sampleIds[organization].map((id) => (
+            {sampleIds.map((id) => (
               <button
                 key={id}
                 type="button"

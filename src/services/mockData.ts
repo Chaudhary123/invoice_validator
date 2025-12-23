@@ -121,16 +121,98 @@ export const salesForceInvoices: Invoice[] = [
   },
 ];
 
+// Odoo mock invoices
+export const odooInvoices: Invoice[] = [
+  {
+    id: 'ODO-INV-001',
+    organization: 'odoo',
+    vendor: 'Prime Manufacturing Co',
+    date: '2024-12-14',
+    lineItems: [
+      { id: 'L1', description: 'Raw Materials - Steel', quantity: 50, unitPrice: 45.00, lineTotal: 2250.00 },
+      { id: 'L2', description: 'Raw Materials - Aluminum', quantity: 30, unitPrice: 60.00, lineTotal: 1800.00 },
+      { id: 'L3', description: 'Logistics & Transport', quantity: 1, unitPrice: 350.00, lineTotal: 350.00 },
+    ],
+    subtotal: 4400.00,
+    taxRate: 0.07,
+    taxAmount: 308.00,
+    discounts: 200.00,
+    grandTotal: 4508.00,
+  },
+  {
+    // Invoice with calculation bug: lineTotal is wrong
+    id: 'ODO-INV-002',
+    organization: 'odoo',
+    vendor: 'Digital Services Hub',
+    date: '2024-12-16',
+    lineItems: [
+      { id: 'L1', description: 'Web Development', quantity: 40, unitPrice: 75.00, lineTotal: 2900.00 }, // BUG: should be 3000
+      { id: 'L2', description: 'UI/UX Design', quantity: 20, unitPrice: 85.00, lineTotal: 1700.00 },
+    ],
+    subtotal: 4600.00, // Cascading error from wrong lineTotal
+    taxRate: 0.08,
+    taxAmount: 368.00,
+    discounts: 100.00,
+    grandTotal: 4868.00,
+  },
+  {
+    // Invoice with tax calculation bug
+    id: 'ODO-INV-003',
+    organization: 'odoo',
+    vendor: 'Hardware Solutions Ltd',
+    date: '2024-12-17',
+    lineItems: [
+      { id: 'L1', description: 'Server Equipment', quantity: 2, unitPrice: 1500.00, lineTotal: 3000.00 },
+      { id: 'L2', description: 'Network Cables (Bundle)', quantity: 10, unitPrice: 25.00, lineTotal: 250.00 },
+    ],
+    subtotal: 3250.00,
+    taxRate: 0.06,
+    taxAmount: 200.00, // BUG: should be 195.00
+    discounts: 0,
+    grandTotal: 3450.00, // Also wrong due to tax error
+  },
+  {
+    // Valid invoice
+    id: 'ODO-INV-004',
+    organization: 'odoo',
+    vendor: 'Office Essentials Plus',
+    date: '2024-12-22',
+    lineItems: [
+      { id: 'L1', description: 'Ergonomic Chairs', quantity: 5, unitPrice: 280.00, lineTotal: 1400.00 },
+      { id: 'L2', description: 'Standing Desks', quantity: 3, unitPrice: 450.00, lineTotal: 1350.00 },
+      { id: 'L3', description: 'Monitor Arms', quantity: 8, unitPrice: 65.00, lineTotal: 520.00 },
+    ],
+    subtotal: 3270.00,
+    taxRate: 0.05,
+    taxAmount: 163.50,
+    discounts: 150.00,
+    grandTotal: 3283.50,
+  },
+];
+
 // Get all mock invoices
 export const getAllMockInvoices = (): Invoice[] => {
-  return [...quickBookInvoices, ...salesForceInvoices];
+  return [...quickBookInvoices, ...salesForceInvoices, ...odooInvoices];
 };
 
 // Find invoice by ID and organization
 export const findMockInvoice = (
   invoiceId: string,
-  organization: 'quickBook' | 'salesForce'
+  organization: 'quickBook' | 'salesForce' | 'odoo'
 ): Invoice | undefined => {
-  const invoices = organization === 'quickBook' ? quickBookInvoices : salesForceInvoices;
+  let invoices: Invoice[];
+  switch (organization) {
+    case 'quickBook':
+      invoices = quickBookInvoices;
+      break;
+    case 'salesForce':
+      invoices = salesForceInvoices;
+      break;
+    case 'odoo':
+      invoices = odooInvoices;
+      break;
+    default:
+      return undefined;
+  }
   return invoices.find((inv) => inv.id.toLowerCase() === invoiceId.toLowerCase());
 };

@@ -1,5 +1,6 @@
 import type { Invoice, OrganizationType } from '../types/invoice';
 import { findMockInvoice } from './mockData';
+import { fetchOdooInvoice } from './odooApi';
 
 // Abstract interface for invoice service
 export interface IInvoiceService {
@@ -62,6 +63,24 @@ export class SalesforceService implements IInvoiceService {
   // }
 }
 
+// Odoo Service Implementation - Uses real Odoo API
+export class OdooService implements IInvoiceService {
+  async fetchInvoice(invoiceId: string): Promise<Invoice> {
+    // Check if it's a mock invoice ID (for testing)
+    if (invoiceId.toUpperCase().startsWith('ODO-INV-')) {
+      const mockInvoice = findMockInvoice(invoiceId, 'odoo');
+      if (mockInvoice) {
+        // Simulate network delay for mock data
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        return mockInvoice;
+      }
+    }
+
+    // Fetch from real Odoo API
+    return fetchOdooInvoice(invoiceId);
+  }
+}
+
 // Factory function to get the correct service based on organization
 export function getInvoiceService(organization: OrganizationType): IInvoiceService {
   switch (organization) {
@@ -69,6 +88,8 @@ export function getInvoiceService(organization: OrganizationType): IInvoiceServi
       return new QuickBookService();
     case 'salesForce':
       return new SalesforceService();
+    case 'odoo':
+      return new OdooService();
     default:
       throw new Error(`Unknown organization: ${organization}`);
   }
